@@ -30,11 +30,15 @@ export class TicketsService {
     return ticket ;
   }
 
-  update(id: number, updateTicketDto: UpdateTicketDto) {
-    return `This action updates a #${id} ticket`;
+  async update(id: number, updateTicketDto: UpdateTicketDto) {
+    const ticket = await this.findOne(id);
+    Object.assign(ticket,updateTicketDto)
+    return this.ticketsRepository.save(ticket);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} ticket`;
+  async remove(id: number) {
+    const ticket= await this.findOne(id);
+    await this.ticketsRepository.remove(ticket)
+    return {message: `ticket ${id} supprimé`};
   }
 }
