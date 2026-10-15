@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,NotFoundException } from '@nestjs/common';
 import { CreateTicketDto } from './dto/create-ticket.dto.js';
 import { UpdateTicketDto } from './dto/update-ticket.dto.js';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,11 +19,15 @@ export class TicketsService {
 
 
   findAll() {
-    return `This action returns all tickets`;
+    return this.ticketsRepository.find({order:{createdAt: 'DESC'}});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} ticket`;
+ async findOne(id: number) {
+    const ticket = await this.ticketsRepository.findOneBy({ id });
+    if (!ticket){
+      throw new NotFoundException(`ticket ${id} introuvable`)
+    }
+    return ticket ;
   }
 
   update(id: number, updateTicketDto: UpdateTicketDto) {
