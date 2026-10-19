@@ -1,4 +1,3 @@
-
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,31 +7,31 @@ import {
 } from 'typeorm';
 
 export enum UserRole {
-    EMPLOYEE = 'employee',
-    AGENT = 'agent',
-    ADMIN = 'admin'
+  EMPLOYEE = 'employee',
+  AGENT = 'agent',
+  ADMIN = 'admin',
 }
 @Entity('users')
 export class User {
-    @PrimaryGeneratedColumn()
-    id : number;
+  @PrimaryGeneratedColumn()
+  id: number;
+  name: string;
+  @Column({ unique: true })
+  email: string;
 
-    @Column({ unique: true })
-    email: string;
+  @Column({ select: false })
+  passwordHash: string;
 
-    @Column({select : false})
-    passwordHash : string;
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.EMPLOYEE,
+  })
+  role: UserRole;
 
-    @Column({
-        type: 'enum',
-        enum : UserRole,
-        default: UserRole.EMPLOYEE,
-    })
-    role: UserRole;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @CreateDateColumn()
-    createdAt: Date;
-
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
