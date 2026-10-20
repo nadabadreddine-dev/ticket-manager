@@ -53,4 +53,12 @@ export class UsersService {
     await this.usersRepository.remove(user);
     return { message: `Utilisateur ${id} supprimé` };
   }
+
+  async findByEmailWithPassword(email: string) {
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .addSelect('user.passwordHash')
+      .where('user.email = :email', { email })
+      .getOne();
+  }
 }
