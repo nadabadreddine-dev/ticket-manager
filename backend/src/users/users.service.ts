@@ -11,10 +11,19 @@ export class UsersService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
   ) {}
-
-  findAll() {
-    return this.usersRepository.find();
+  private sanitizeUser(user: User) {
+    const { passwordHash, ...result } = user;
+    return result;
   }
+
+  async findAll() {
+    const users = await this.usersRepository.find();
+    if (!users) {
+      throw new NotFoundException(`Utilisateurs introuvable`);
+    }
+    return users;
+  }
+
   async findOne(id: number) {
     const user = await this.usersRepository.findOneBy({ id });
     if (!user) {
@@ -23,9 +32,15 @@ export class UsersService {
 
     return user;
   }
-  async create(data: Partial<User>) {
-    const user = this.usersRepository.create(data);
-    return this.usersRepository.save(user);
+  async create(data: CreateUserDto) {
+    const passwordHash = await bcrypt.hash(data.password, 10);
+    const user = this.usersRepository.create({
+      name: data.name,
+      email: data.email,
+      passwordHash,
+    });
+    const savedUser = await this.usersRepository.save(user);
+    return this.sanitizeUser(savedUser);
   }
 
   async update(id: number, data: UpdateUserDto) {
