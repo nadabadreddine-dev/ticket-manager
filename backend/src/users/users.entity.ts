@@ -4,7 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+
+import { Ticket } from '../tickets/entities/ticket.entity.js';
 
 export enum UserRole {
   EMPLOYEE = 'employee',
@@ -35,4 +38,6 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+  @OneToMany(() => Ticket, (ticket) => ticket.user)
+  tickets!: Ticket[];
 }

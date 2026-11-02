@@ -3,7 +3,10 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { User } from '../../users/users.entity.js';
 
 export enum TicketPriority {
   LOW = 'low',
@@ -44,4 +47,8 @@ export class Ticket {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @ManyToOne(() => User, { nullable: false })
+  @JoinColumn({ name: 'userId' })
+  user!: User;
 }
